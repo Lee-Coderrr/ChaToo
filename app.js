@@ -8,7 +8,7 @@ const socketIO = require('socket.io');
 // Configuration
 const url = 'mongodb://localhost:27017';
 const dbName = 'chatDB';
-const apiKey = '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';
+const apiKey = 'sk-';
 
 // App setup
 const app = express();
