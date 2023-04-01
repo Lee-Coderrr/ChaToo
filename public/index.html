@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Chat App</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="chat-container">
+        <div id="chat-header">
+            <h1>Chat App</h1>
+        </div>
+        <div id="messages"></div>
+        <form id="chat-form">
+            <input id="user-input" autocomplete="off" placeholder="Type your message...">
+            <button type="submit">Send</button>
+        </form>
+        <script>
+            const socket = io();
+
+            const messages = document.getElementById('messages');
+            const form = document.getElementById('chat-form');
+            const input = document.getElementById('user-input');
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                if (input.value) {
+                    socket.emit('chat message', input.value);
+                    socket.emit('server ms', input.value)
+                    input.value = '';
+                }
+            });
+
+            socket.on('chat message', (data) => {
+                const item = document.createElement('div');
+                item.classList.add('message');
+
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                // bubble.textContent = data.msg;
+                bubble.innerHTML = data.msg.replace(/\n/g, '<br>'); // 줄바꿈 문자를 <br>로 대체
+
+                if (data.id === "client") {
+                    item.classList.add('received'); // 수정된 부분: 클라이언트의 메시지를 왼쪽 말풍선으로 변경
+                } else if (data.id === "server") {
+                    item.classList.add('sent'); // 수정된 부분: 서버의 메시지를 오른쪽 말풍선으로 변경
+                }
+
+                item.appendChild(bubble);
+                messages.appendChild(item);
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        </script>
+
+</body>
+
+</html>
